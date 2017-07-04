@@ -1,7 +1,7 @@
 A datepicker with React.
 
 Usage:
-javascript```
+```javascript
 import DatePicker from './DatePicker';
 
 function fn(date){
