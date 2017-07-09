@@ -3,11 +3,23 @@ import React from 'react';
 
 import './DatePicker.css'
 
-const LATEST_DAY = new Date('2017/8/31');
-const LATEST_TS = LATEST_DAY.getTime();
+'use strict';
+
+let LATEST_DAY;
+let LATEST_TS;
+let EARLIEST_DAY;
+let EARLIEST_TS;
+let date_selected;
+// set after DatePicker called
+
+const TODAY = new Date();
+// TODAY
+TODAY.setHours(0);
+TODAY.setMinutes(0);
+TODAY.setSeconds(0);
+TODAY.setMilliseconds(0);
 
 const MILLISEC_PER_DAY = 24*60*60*1000;
-
 
 function to_prev_day(date){
 	if(date instanceof Date){
@@ -26,19 +38,11 @@ function to_next_day(date){
 	}
 }
 
-const TODAY = new Date();
-// TODAY
-TODAY.setHours(0);
-TODAY.setMinutes(0);
-TODAY.setSeconds(0);
-TODAY.setMilliseconds(0);
-const EARLIEST_TS = TODAY.getTime();
-
 function format_date(date){
 	// timestamp(ms) to 'YYYY-MM-DD'
 	let day;
 	if(date instanceof Date){
-		day = new Date(date);
+		day = date;
 	}else{
 		day = new Date();
 		day.setTime(date);
@@ -51,10 +55,6 @@ function format_date(date){
 	return `${y}-${m<10? '0'+m: m}-${d<10? '0'+d: d}`;
 }
 
-
-let date_selected = format_date(TODAY);
-
-
 function selectable(ts){
 	if(EARLIEST_TS <= ts && ts <= LATEST_TS){
 		return true;
@@ -66,6 +66,7 @@ function selectable(ts){
 
 
 function DisplayDate(ts, month){
+
 	let classname = 'display-date';
 	const date = new Date();
 	date.setTime(ts);
@@ -115,8 +116,14 @@ class DateSelector extends React.Component{
 		const d = new Date(date);
 		d.setDate(1);
 		d.setHours(0);
+		let count = 0;
 		while(d.getDay() !== 0){
 			to_prev_day(d);
+
+			count++;
+			if(count > 100){
+				throw new Error('maybe dead loop');
+			}
 		}
 		return d;
 	}
@@ -211,11 +218,34 @@ class DateSelector extends React.Component{
 class DatePicker extends React.Component{
 	constructor(props){
 		super(props);
+		if(props['earliest-day']){
+			EARLIEST_DAY = new Date(props['earliest-day']);
+			EARLIEST_TS = EARLIEST_DAY.getTime();
+		}else{
+			EARLIEST_DAY = TODAY;
+			EARLIEST_TS = EARLIEST_DAY.getTime();
+		}
+
+
+		if(props['latest-day']){
+			LATEST_DAY = new Date(props['latest-day']);
+			LATEST_TS = LATEST_DAY.getTime();
+		}else{
+			LATEST_TS = Infinity;
+		}
+
+
+		if(selectable(TODAY.getTime())){
+			date_selected = format_date(TODAY);
+		}else{
+			date_selected = format_date(EARLIEST_DAY);
+		}
 
 		this.state = {
-			'selected-date': format_date(TODAY),
-			'show-setector': false,
+			'selected-date': date_selected,
+			'show-selector': false,
 		};
+		
 
 		this.handleClick = this.handleClick.bind(this);
 		this.showSelector = this.showSelector.bind(this);

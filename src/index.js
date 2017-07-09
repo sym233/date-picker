@@ -16,7 +16,7 @@ function callback(date){
 
 
 ReactDOM.render(
-	<DatePicker callback={callback}/>,
+	<DatePicker earliest-day='2017-6-6' latest-day='2017-9-9' callback={callback}/>,
 	document.getElementById('root')
 );
 
