@@ -7,15 +7,15 @@ Usage:
 import DatePicker from './DatePicker';
 
 function fn(date){
-	// fired when DatePicker changes date
-	// parameter date: string, 'YYYY-MM-DD'
-	//
+  // fired when DatePicker changes date
+  // parameter date: string, 'YYYY-MM-DD'
+  //
 }
 
 
 ReactDOM.render(
-		<DatePicker earliset-day={earliest_day} latest-day ={latest_day} callback={fn}/>,
-		document.getElementById('root')
+  <DatePicker earliset-day={earliest_day} latest-day ={latest_day} callback={fn}/>,
+  document.getElementById('root')
 );
 
 // earliest_day and latest_day are a string formatted as 'YYYY-MM-DD', default today and Infinity.
